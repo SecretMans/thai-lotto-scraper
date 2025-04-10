@@ -72,18 +72,30 @@ def update_main_json(new_data):
 # 🚀 Push ขึ้น GitHub
 def git_push(new_data):
     try:
-        subprocess.run(["git", "add", "lotto_history/*.json"], check=True)
+        # ✅ Commit ทีละไฟล์ใน lotto_history/
+        for entry in new_data:
+            try:
+                date_obj = thai_date_to_datetime(entry["date"])
+                filename = f"lotto_history/{date_obj.strftime('%Y-%m-%d')}.json"
+                commit_msg = f"🎯 Lottery result for {date_obj.strftime('%d %B %Y')}"
+                
+                subprocess.run(["git", "add", filename], check=True)
+                subprocess.run(["git", "commit", "-m", commit_msg], check=True)
+                print(f"✅ Git commit: {filename} → {commit_msg}")
+            except Exception as e:
+                print(f"⚠️ Skip commit for entry {entry.get('id')}: {e}")
+
+        # ✅ Commit รวมไฟล์หลักท้ายสุด
         subprocess.run(["git", "add", "lotto_history.json"], check=True)
-
-        last_date = new_data[-1]["date"]
-        dt = thai_date_to_datetime(last_date)
-        commit_msg = f"🎯 Lottery result for {dt.strftime('%d %B %Y')}"
-
-        subprocess.run(["git", "commit", "-m", commit_msg], check=True)
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        main_commit_msg = f"🗃️ Update main lotto_history.json at {now}"
+        subprocess.run(["git", "commit", "-m", main_commit_msg], check=True)
         subprocess.run(["git", "push"], check=True)
-        print(f"✅ Git push success: {commit_msg}")
+        print(f"🚀 Git push success!")
+
     except subprocess.CalledProcessError as e:
         print(f"❌ Git error: {e}")
+
 
 # 🕵️‍♂️ เริ่มลุย!
 metaurl = "https://news.sanook.com/lotto/check/{:02d}{:02d}{}"
