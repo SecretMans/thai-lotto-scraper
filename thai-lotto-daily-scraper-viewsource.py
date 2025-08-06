@@ -11,7 +11,7 @@ if hasattr(sys.stdout, 'reconfigure'):
 
 # 🧠 แปลงเป็นรหัสแบบ พ.ศ. เช่น 05082568
 def get_thai_lotto_id(dt):
-    return dt.strftime("%d%m") + str(dt.year + 543)
+    return '01082568'
 
 # 💾 บันทึกแยกวัน
 def save_per_date(result):
@@ -63,7 +63,7 @@ def git_push(json_file, result):
         subprocess.run(["git", "add", "lotto_history.json"], check=True)
 
         now = datetime.now()
-        now_thai = now.strftime(f"%d-%m-{now.year + 543} %H:%M:%S")
+        now_thai = now.strftime(f"{now.year + 543}-%m-%d %H:%M")
         subprocess.run(["git", "commit", "--allow-empty", "-m", f"Update main lotto_history.json at {now_thai}"], check=True)
 
         # ✅ Step 3: Push ทั้งหมด
