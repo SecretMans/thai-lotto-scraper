@@ -11,7 +11,7 @@ if hasattr(sys.stdout, 'reconfigure'):
 
 # 🧠 แปลงเป็นรหัสแบบ พ.ศ. เช่น 05082568
 def get_thai_lotto_id(dt):
-    return dt.strftime("%d%m") + str(dt.year + 543)
+    return '01082568'
 
 # 💾 บันทึกแยกวัน
 def save_per_date(result):
@@ -54,17 +54,8 @@ def git_push(json_file, result):
         subprocess.run(["git", "add", json_file], check=True)
         subprocess.run(["git", "add", "lotto_history.json"], check=True)
 
-        # ✨ เช็คก่อนว่าไฟล์มีการเปลี่ยนแปลงหรือไม่
-        result_commit = subprocess.run(["git", "diff", "--cached", "--quiet"])
-        has_changes = result_commit.returncode != 0  # 0 = no changes, 1 = has changes
-
         date_obj = datetime.strptime(result["date"], "%d %B %Y")
-        commit_msg = f"Lottery result for {date_obj.strftime('%Y-%m-%d')}"
-
-        if has_changes:
-            subprocess.run(["git", "commit", "-m", commit_msg], check=True)
-        else:
-            print("ℹ️ Nothing to commit. Skipping commit step.")
+        subprocess.run(["git", "commit", "-m", f"Lottery result for {date_obj.strftime('%Y-%m-%d')}"], check=True)
 
         now = datetime.now()
         now_thai = now.strftime(f"%d-%m-{now.year + 543} %H:%M:%S")
@@ -72,7 +63,6 @@ def git_push(json_file, result):
 
         subprocess.run(["git", "push"], check=True)
         print("🚀 Git push success")
-
     except subprocess.CalledProcessError as e:
         print(f"❌ Git error: {e}")
 
