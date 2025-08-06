@@ -11,7 +11,7 @@ if hasattr(sys.stdout, 'reconfigure'):
 
 # 🧠 แปลงเป็นรหัสแบบ พ.ศ. เช่น 05082568
 def get_thai_lotto_id(dt):
-    return '01082568'
+    return dt.strftime("%d%m") + str(dt.year + 543)
 
 # 💾 บันทึกแยกวัน
 def save_per_date(result):
@@ -51,18 +51,25 @@ def update_main_json(new_data):
 # 🚀 Git push
 def git_push(json_file, result):
     try:
-        subprocess.run(["git", "add", json_file], check=True)
-        subprocess.run(["git", "add", "lotto_history.json"], check=True)
-
         date_obj = datetime.strptime(result["date"], "%d %B %Y")
-        subprocess.run(["git", "commit", "-m", f"Lottery result for {date_obj.strftime('%Y-%m-%d')}"], check=True)
+        commit_msg = f"Lottery result for {date_obj.strftime('%Y-%m-%d')}"
+
+        # ✅ Step 1: Add และ commit เฉพาะไฟล์หวยรายวัน
+        subprocess.run(["git", "add", json_file], check=True)
+        subprocess.run(["git", "commit", "-m", commit_msg], check=True)
+        print(f"✅ Git commit: {commit_msg}")
+
+        # ✅ Step 2: Add และทำ empty commit แยกให้กับ lotto_history.json
+        subprocess.run(["git", "add", "lotto_history.json"], check=True)
 
         now = datetime.now()
         now_thai = now.strftime(f"%d-%m-{now.year + 543} %H:%M:%S")
         subprocess.run(["git", "commit", "--allow-empty", "-m", f"Update main lotto_history.json at {now_thai}"], check=True)
 
+        # ✅ Step 3: Push ทั้งหมด
         subprocess.run(["git", "push"], check=True)
         print("🚀 Git push success")
+
     except subprocess.CalledProcessError as e:
         print(f"❌ Git error: {e}")
 
