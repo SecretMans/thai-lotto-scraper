@@ -11,7 +11,7 @@ if hasattr(sys.stdout, 'reconfigure'):
 
 # 🧠 แปลงเป็นรหัสแบบ พ.ศ. เช่น 05082568
 def get_thai_lotto_id(dt):
-    return '01082568'
+    return dt.strftime("%d%m") + str(dt.year + 543)
 
 # 💾 บันทึกแยกวัน
 def save_per_date(result):
