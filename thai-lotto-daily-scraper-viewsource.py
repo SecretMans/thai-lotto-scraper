@@ -6,6 +6,9 @@ import os
 import subprocess
 import sys
 
+repo_path = r"D:\thai-lotto-scraper"
+os.chdir(repo_path)
+
 if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
